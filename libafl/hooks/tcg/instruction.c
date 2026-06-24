@@ -31,17 +31,8 @@ size_t libafl_qemu_add_instruction_hooks(vaddr pc,
 
     size_t idx = LIBAFL_TABLES_HASH(pc);
 
-    // Avoid duplicate hook registrations: if a hook with the same (addr,
-    // callback) already exists, keep the existing one.
-    struct libafl_instruction_hook* hk = libafl_qemu_instruction_hooks[idx];
-    while (hk) {
-        if (hk->addr == pc && hk->helper_info.func == exec_cb) {
-            return hk->num;
-        }
-        hk = hk->next;
-    }
-
-    hk = calloc(sizeof(struct libafl_instruction_hook), 1);
+    struct libafl_instruction_hook* hk =
+        calloc(sizeof(struct libafl_instruction_hook), 1);
     hk->addr = pc;
     hk->data = data;
     hk->helper_info = libafl_instruction_info;
